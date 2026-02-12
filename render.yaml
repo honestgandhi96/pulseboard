@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: stock-news-web
+    runtime: python
+    rootDir: apps/api
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: DB_PATH
+        value: /var/data/news.db
+    disk:
+      name: stock-news-data
+      mountPath: /var/data
+      sizeGB: 1
+
+  - type: cron
+    name: stock-news-ingest-cron
+    runtime: native
+    schedule: "*/5 * * * *"
+    plan: starter
+    startCommand: curl -fsS -X POST "$BASE_URL/v1/ingest/run?trigger_type=scheduled"
+    envVars:
+      - key: BASE_URL
+        sync: false

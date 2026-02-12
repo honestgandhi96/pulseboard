@@ -43,6 +43,19 @@ curl "http://localhost:8000/v1/articles?limit=20&offset=0&q=inflation"
 ## Scheduled ingestion
 See `/Users/sugamgandhi/Desktop/stock_news/docs/SCHEDULING.md`.
 
+## Deploy (Render Blueprint)
+1. Push this repo to GitHub.
+2. In Render: **New +** -> **Blueprint** -> select repo.
+3. Render will use `/Users/sugamgandhi/Desktop/stock_news/render.yaml`.
+4. Set cron env var: `BASE_URL=https://<your-web-service>.onrender.com`.
+5. Seed + first ingest:
+```bash
+curl -X POST "https://<your-web-service>.onrender.com/v1/sources/seed"
+curl -X POST "https://<your-web-service>.onrender.com/v1/ingest/run?force_all=true"
+```
+
+Detailed steps: `/Users/sugamgandhi/Desktop/stock_news/docs/DEPLOY_RENDER.md`.
+
 ## Key files
 - `/Users/sugamgandhi/Desktop/stock_news/apps/api/app/main.py`: API + frontend mount
 - `/Users/sugamgandhi/Desktop/stock_news/apps/api/app/ingest.py`: RSS ingest + dedup logic
@@ -52,3 +65,5 @@ See `/Users/sugamgandhi/Desktop/stock_news/docs/SCHEDULING.md`.
 - `/Users/sugamgandhi/Desktop/stock_news/apps/web/app.js`: API integration and pagination controls
 - `/Users/sugamgandhi/Desktop/stock_news/config/sources.json`: initial source registry
 - `/Users/sugamgandhi/Desktop/stock_news/docs/API_CONTRACT.md`: endpoint contract
+- `/Users/sugamgandhi/Desktop/stock_news/render.yaml`: Render blueprint (web + cron)
+- `/Users/sugamgandhi/Desktop/stock_news/docs/DEPLOY_RENDER.md`: Render deploy runbook

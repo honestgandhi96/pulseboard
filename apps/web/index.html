@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PulseBoard | Finance News</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/assets/styles.css" />
+  </head>
+  <body>
+    <div class="bg-orb orb-a"></div>
+    <div class="bg-orb orb-b"></div>
+
+    <main class="layout">
+      <header class="hero reveal">
+        <p class="eyebrow">Realtime Market Intelligence</p>
+        <h1>PulseBoard <span>Finance Wire</span></h1>
+        <p class="subhead">
+          Fast, searchable finance headlines aggregated from trusted feeds. Snippets only, always linked to originals.
+        </p>
+      </header>
+
+      <section class="controls reveal">
+        <form id="search-form" class="search-row">
+          <input id="search-input" type="search" placeholder="Search earnings, rates, RBI, Fed, IPO..." />
+          <button type="submit">Search</button>
+        </form>
+
+        <div class="filter-row">
+          <label for="source-select">Source</label>
+          <select id="source-select">
+            <option value="">All Sources</option>
+          </select>
+
+          <label for="limit-select">Per Page</label>
+          <select id="limit-select">
+            <option value="10">10</option>
+            <option value="20" selected>20</option>
+            <option value="40">40</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="meta reveal" id="meta"></section>
+
+      <section>
+        <div id="news-grid" class="news-grid"></div>
+        <p id="empty-state" class="empty hidden">No articles found for this filter. Try a broader query.</p>
+      </section>
+
+      <nav class="pagination reveal">
+        <button id="prev-btn" disabled>Previous</button>
+        <span id="page-label">Page 1</span>
+        <button id="next-btn" disabled>Next</button>
+      </nav>
+    </main>
+
+    <template id="card-template">
+      <article class="card reveal-card">
+        <div class="card-top">
+          <span class="source-tag"></span>
+          <time class="published-at"></time>
+        </div>
+        <h2 class="title"></h2>
+        <p class="summary"></p>
+        <a class="read-link" target="_blank" rel="noopener noreferrer">Read Original</a>
+      </article>
+    </template>
+
+    <script src="/assets/app.js" defer></script>
+  </body>
+</html>

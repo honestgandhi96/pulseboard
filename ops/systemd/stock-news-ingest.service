@@ -1,0 +1,9 @@
+[Unit]
+Description=Stock News RSS Ingestion Job
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/Users/sugamgandhi/Desktop/stock_news
+ExecStart=/Users/sugamgandhi/Desktop/stock_news/scripts/run_ingest.sh

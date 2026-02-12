@@ -1,0 +1,109 @@
+{
+  "sources": [
+    {
+      "name": "Reuters Business",
+      "feed_url": "https://www.reutersagency.com/feed/?best-topics=business-finance&post_type=best",
+      "polling_interval_minutes": 5,
+      "status": "active",
+      "trust_score": 95
+    },
+    {
+      "name": "Yahoo Finance",
+      "feed_url": "https://finance.yahoo.com/news/rssindex",
+      "polling_interval_minutes": 5,
+      "status": "active",
+      "trust_score": 88
+    },
+    {
+      "name": "MarketWatch Top Stories",
+      "feed_url": "https://feeds.content.dowjones.io/public/rss/mw_topstories",
+      "polling_interval_minutes": 5,
+      "status": "active",
+      "trust_score": 86
+    },
+    {
+      "name": "CNBC Top News",
+      "feed_url": "https://www.cnbc.com/id/100003114/device/rss/rss.html",
+      "polling_interval_minutes": 5,
+      "status": "active",
+      "trust_score": 86
+    },
+    {
+      "name": "Investing.com",
+      "feed_url": "https://www.investing.com/rss/news.rss",
+      "polling_interval_minutes": 5,
+      "status": "active",
+      "trust_score": 82
+    },
+    {
+      "name": "The Economic Times Markets",
+      "feed_url": "https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms",
+      "polling_interval_minutes": 5,
+      "status": "active",
+      "trust_score": 84
+    },
+    {
+      "name": "The Economic Times News",
+      "feed_url": "https://economictimes.indiatimes.com/rssfeedsdefault.cms",
+      "polling_interval_minutes": 10,
+      "status": "active",
+      "trust_score": 80
+    },
+    {
+      "name": "Business Standard Markets",
+      "feed_url": "https://www.business-standard.com/rss/markets-106.rss",
+      "polling_interval_minutes": 8,
+      "status": "active",
+      "trust_score": 82
+    },
+    {
+      "name": "Moneycontrol Business",
+      "feed_url": "https://www.moneycontrol.com/rss/business.xml",
+      "polling_interval_minutes": 8,
+      "status": "active",
+      "trust_score": 79
+    },
+    {
+      "name": "Mint Markets",
+      "feed_url": "https://www.livemint.com/rss/markets",
+      "polling_interval_minutes": 8,
+      "status": "active",
+      "trust_score": 80
+    },
+    {
+      "name": "SEC Press Releases",
+      "feed_url": "https://www.sec.gov/news/pressreleases.rss",
+      "polling_interval_minutes": 10,
+      "status": "active",
+      "trust_score": 90
+    },
+    {
+      "name": "Federal Reserve Press",
+      "feed_url": "https://www.federalreserve.gov/feeds/press_all.xml",
+      "polling_interval_minutes": 15,
+      "status": "active",
+      "trust_score": 92
+    },
+    {
+      "name": "IMF News",
+      "feed_url": "https://www.imf.org/en/News/RSS",
+      "polling_interval_minutes": 20,
+      "status": "active",
+      "trust_score": 84
+    },
+    {
+      "name": "World Bank News",
+      "feed_url": "https://www.worldbank.org/en/news/all?format=rss",
+      "polling_interval_minutes": 20,
+      "status": "active",
+      "trust_score": 84
+    },
+    {
+      "name": "CoinDesk Markets",
+      "feed_url": "https://www.coindesk.com/arc/outboundfeeds/rss/?outputType=xml",
+      "polling_interval_minutes": 10,
+      "status": "active",
+      "trust_score": 72
+    }
+  ]
+}

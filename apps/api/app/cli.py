@@ -3,6 +3,7 @@ import json
 
 from .db import init_db
 from .ingest import ingest_all
+from .tagging import enrich_articles_without_tags
 
 
 def main() -> None:
@@ -20,6 +21,10 @@ def main() -> None:
         help="Trigger type to persist in run logs",
     )
 
+    enrich_parser = subparsers.add_parser("enrich", help="Backfill article tags")
+    enrich_parser.add_argument("--limit", type=int, default=50, help="Max articles to process")
+    enrich_parser.add_argument("--force", action="store_true", help="Retag articles even if tags exist")
+
     args = parser.parse_args()
     init_db()
 
@@ -29,6 +34,11 @@ def main() -> None:
             force_all=args.force_all,
             source_id=args.source_id,
         )
+        print(json.dumps(result, indent=2))
+        return
+
+    if args.command == "enrich":
+        result = enrich_articles_without_tags(limit=args.limit, force=args.force)
         print(json.dumps(result, indent=2))
 
 

@@ -14,6 +14,7 @@ import feedparser
 import certifi
 
 from .db import execute, get_conn, query_all, query_one
+from .tagging import enrich_article
 
 TRACKING_PARAMS = {
     "utm_source",
@@ -484,6 +485,9 @@ def ingest_source(source: Dict[str, Any], run_id: int) -> Dict[str, Any]:
     updated = 0
     errors = 0
     entries_seen = 0
+    enriched = 0
+    enrichment_fallbacks = 0
+    enrichment_failures = 0
     error_message: Optional[str] = None
 
     try:
@@ -502,7 +506,7 @@ def ingest_source(source: Dict[str, Any], run_id: int) -> Dict[str, Any]:
             published_at = parse_datetime(entry.get("published") or entry.get("updated"))
             language = (entry.get("language") or "en").strip()[:10] or "en"
 
-            created, _ = upsert_article(
+            created, article_id = upsert_article(
                 source_id=int(source["id"]),
                 title=title,
                 summary=summary,
@@ -514,6 +518,17 @@ def ingest_source(source: Dict[str, Any], run_id: int) -> Dict[str, Any]:
             )
             if created:
                 inserted += 1
+                try:
+                    enrichment_result = enrich_article(article_id)
+                    if enrichment_result["status"] == "success":
+                        enriched += 1
+                    elif enrichment_result["status"] == "fallback":
+                        enriched += 1
+                        enrichment_fallbacks += 1
+                    elif enrichment_result["status"] != "skipped":
+                        enrichment_failures += 1
+                except Exception:
+                    enrichment_failures += 1
             else:
                 updated += 1
     except Exception as exc:
@@ -558,6 +573,9 @@ def ingest_source(source: Dict[str, Any], run_id: int) -> Dict[str, Any]:
         "entries_seen": entries_seen,
         "duration_ms": duration_ms,
         "error_message": error_message,
+        "enriched": enriched,
+        "enrichment_fallbacks": enrichment_fallbacks,
+        "enrichment_failures": enrichment_failures,
     }
 
 

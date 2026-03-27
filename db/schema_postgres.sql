@@ -31,6 +31,34 @@ CREATE TABLE IF NOT EXISTS articles (
     language TEXT NOT NULL DEFAULT 'en'
 );
 
+CREATE TABLE IF NOT EXISTS article_enrichment_runs (
+    id BIGSERIAL PRIMARY KEY,
+    article_id BIGINT NOT NULL REFERENCES articles(id) ON DELETE CASCADE,
+    status TEXT NOT NULL CHECK (status IN ('success', 'fallback', 'failed')),
+    model_name TEXT,
+    provider TEXT NOT NULL DEFAULT 'openai',
+    raw_payload TEXT,
+    error_message TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS article_tags (
+    id BIGSERIAL PRIMARY KEY,
+    article_id BIGINT NOT NULL REFERENCES articles(id) ON DELETE CASCADE,
+    tag_type TEXT NOT NULL CHECK (tag_type IN ('symbol', 'sector', 'topic')),
+    canonical_key TEXT NOT NULL,
+    display_name TEXT NOT NULL,
+    confidence DOUBLE PRECISION,
+    source TEXT NOT NULL DEFAULT 'ai',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_article_tags_unique
+ON article_tags(article_id, tag_type, canonical_key);
+CREATE INDEX IF NOT EXISTS idx_article_tags_article ON article_tags(article_id);
+CREATE INDEX IF NOT EXISTS idx_article_tags_key ON article_tags(canonical_key);
+CREATE INDEX IF NOT EXISTS idx_article_tags_type_key ON article_tags(tag_type, canonical_key);
 CREATE INDEX IF NOT EXISTS idx_articles_title_hash ON articles(title_hash);
 CREATE INDEX IF NOT EXISTS idx_articles_published ON articles(published_at DESC);
 CREATE INDEX IF NOT EXISTS idx_articles_source ON articles(source_id, published_at DESC);

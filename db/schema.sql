@@ -32,6 +32,36 @@ CREATE TABLE IF NOT EXISTS articles (
     FOREIGN KEY (source_id) REFERENCES sources(id)
 );
 
+CREATE TABLE IF NOT EXISTS article_enrichment_runs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    article_id INTEGER NOT NULL,
+    status TEXT NOT NULL CHECK (status IN ('success', 'fallback', 'failed')),
+    model_name TEXT,
+    provider TEXT NOT NULL DEFAULT 'openai',
+    raw_payload TEXT,
+    error_message TEXT,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (article_id) REFERENCES articles(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS article_tags (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    article_id INTEGER NOT NULL,
+    tag_type TEXT NOT NULL CHECK (tag_type IN ('symbol', 'sector', 'topic')),
+    canonical_key TEXT NOT NULL,
+    display_name TEXT NOT NULL,
+    confidence REAL,
+    source TEXT NOT NULL DEFAULT 'ai',
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (article_id) REFERENCES articles(id) ON DELETE CASCADE
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_article_tags_unique ON article_tags(article_id, tag_type, canonical_key);
+CREATE INDEX IF NOT EXISTS idx_article_tags_article ON article_tags(article_id);
+CREATE INDEX IF NOT EXISTS idx_article_tags_key ON article_tags(canonical_key);
+CREATE INDEX IF NOT EXISTS idx_article_tags_type_key ON article_tags(tag_type, canonical_key);
+
 CREATE VIRTUAL TABLE IF NOT EXISTS articles_fts USING fts5(
     title,
     summary,

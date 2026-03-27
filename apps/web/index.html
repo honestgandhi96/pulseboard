@@ -37,6 +37,13 @@
             <option value="">All Sources</option>
           </select>
 
+          <label for="sort-select">View</label>
+          <select id="sort-select">
+            <option value="all">All Headlines</option>
+            <option value="symbol">Symbol Lens</option>
+            <option value="topic">Topic Lens</option>
+          </select>
+
           <label for="limit-select">Per Page</label>
           <select id="limit-select">
             <option value="10">10</option>
@@ -45,6 +52,32 @@
           </select>
         </div>
       </section>
+
+      <section class="intel-rail reveal">
+        <div class="intel-panel">
+          <div class="panel-head">
+            <p class="panel-kicker">Trending Symbols</p>
+            <button type="button" class="ghost-btn" data-clear-filter="symbol">Clear</button>
+          </div>
+          <div id="trending-symbols" class="tag-cloud"></div>
+        </div>
+        <div class="intel-panel">
+          <div class="panel-head">
+            <p class="panel-kicker">Trending Topics</p>
+            <button type="button" class="ghost-btn" data-clear-filter="topic">Clear</button>
+          </div>
+          <div id="trending-topics" class="tag-cloud"></div>
+        </div>
+        <div class="intel-panel">
+          <div class="panel-head">
+            <p class="panel-kicker">Trending Sectors</p>
+            <button type="button" class="ghost-btn" data-clear-filter="sector">Clear</button>
+          </div>
+          <div id="trending-sectors" class="tag-cloud"></div>
+        </div>
+      </section>
+
+      <section id="active-filters" class="active-filters reveal hidden"></section>
 
       <section class="meta reveal" id="meta"></section>
 
@@ -68,6 +101,11 @@
         </div>
         <h2 class="title"></h2>
         <p class="summary"></p>
+        <div class="tag-row">
+          <div class="tag-group" data-group="symbols"></div>
+          <div class="tag-group" data-group="sectors"></div>
+          <div class="tag-group" data-group="topics"></div>
+        </div>
         <a class="read-link" target="_blank" rel="noopener noreferrer">Read Original</a>
       </article>
     </template>

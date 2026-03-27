@@ -1,0 +1,191 @@
+{
+  "symbols": [
+    {
+      "canonical_key": "RELIANCE",
+      "display_name": "Reliance Industries",
+      "aliases": ["reliance industries", "reliance", "ril", "jio financial", "ril shares"],
+      "sector": "energy"
+    },
+    {
+      "canonical_key": "TCS",
+      "display_name": "TCS",
+      "aliases": ["tata consultancy services", "tcs", "tcs shares"],
+      "sector": "it"
+    },
+    {
+      "canonical_key": "INFY",
+      "display_name": "Infosys",
+      "aliases": ["infosys", "infy", "infosys shares"],
+      "sector": "it"
+    },
+    {
+      "canonical_key": "HDFCBANK",
+      "display_name": "HDFC Bank",
+      "aliases": ["hdfc bank", "hdfcbank", "hdfc bank shares"],
+      "sector": "banking"
+    },
+    {
+      "canonical_key": "ICICIBANK",
+      "display_name": "ICICI Bank",
+      "aliases": ["icici bank", "icicibank"],
+      "sector": "banking"
+    },
+    {
+      "canonical_key": "SBIN",
+      "display_name": "State Bank of India",
+      "aliases": ["state bank of india", "sbi", "sbin"],
+      "sector": "banking"
+    },
+    {
+      "canonical_key": "AXISBANK",
+      "display_name": "Axis Bank",
+      "aliases": ["axis bank", "axisbank"],
+      "sector": "banking"
+    },
+    {
+      "canonical_key": "KOTAKBANK",
+      "display_name": "Kotak Mahindra Bank",
+      "aliases": ["kotak mahindra bank", "kotak bank", "kotakbank"],
+      "sector": "banking"
+    },
+    {
+      "canonical_key": "LT",
+      "display_name": "Larsen & Toubro",
+      "aliases": ["larsen and toubro", "l&t", "lt", "larsen & toubro"],
+      "sector": "capital-goods"
+    },
+    {
+      "canonical_key": "BHARTIARTL",
+      "display_name": "Bharti Airtel",
+      "aliases": ["bharti airtel", "airtel", "bhartiartl"],
+      "sector": "telecom"
+    },
+    {
+      "canonical_key": "ITC",
+      "display_name": "ITC",
+      "aliases": ["itc", "itc shares"],
+      "sector": "fmcg"
+    },
+    {
+      "canonical_key": "HINDUNILVR",
+      "display_name": "Hindustan Unilever",
+      "aliases": ["hindustan unilever", "hul", "hindunilvr"],
+      "sector": "fmcg"
+    },
+    {
+      "canonical_key": "SUNPHARMA",
+      "display_name": "Sun Pharma",
+      "aliases": ["sun pharma", "sun pharmaceutical", "sunpharma"],
+      "sector": "pharma"
+    },
+    {
+      "canonical_key": "DRREDDY",
+      "display_name": "Dr Reddy's",
+      "aliases": ["dr reddy", "dr reddy's", "dr reddys", "drreddy"],
+      "sector": "pharma"
+    },
+    {
+      "canonical_key": "TATAMOTORS",
+      "display_name": "Tata Motors",
+      "aliases": ["tata motors", "tatamotors", "jlr"],
+      "sector": "auto"
+    },
+    {
+      "canonical_key": "M&M",
+      "display_name": "Mahindra & Mahindra",
+      "aliases": ["mahindra & mahindra", "mahindra and mahindra", "m&m", "mahindra"],
+      "sector": "auto"
+    },
+    {
+      "canonical_key": "MARUTI",
+      "display_name": "Maruti Suzuki",
+      "aliases": ["maruti suzuki", "maruti", "maruti shares"],
+      "sector": "auto"
+    },
+    {
+      "canonical_key": "TATASTEEL",
+      "display_name": "Tata Steel",
+      "aliases": ["tata steel", "tatasteel"],
+      "sector": "metals"
+    },
+    {
+      "canonical_key": "JSWSTEEL",
+      "display_name": "JSW Steel",
+      "aliases": ["jsw steel", "jswsteel"],
+      "sector": "metals"
+    },
+    {
+      "canonical_key": "DLF",
+      "display_name": "DLF",
+      "aliases": ["dlf", "dlf shares"],
+      "sector": "realty"
+    },
+    {
+      "canonical_key": "NIFTY50",
+      "display_name": "Nifty 50",
+      "aliases": ["nifty", "nifty 50", "nse nifty"],
+      "sector": "indices"
+    },
+    {
+      "canonical_key": "SENSEX",
+      "display_name": "Sensex",
+      "aliases": ["sensex", "bse sensex"],
+      "sector": "indices"
+    },
+    {
+      "canonical_key": "BANKNIFTY",
+      "display_name": "Bank Nifty",
+      "aliases": ["bank nifty", "banknifty"],
+      "sector": "indices"
+    },
+    {
+      "canonical_key": "BTC",
+      "display_name": "Bitcoin",
+      "aliases": ["bitcoin", "btc"],
+      "sector": "crypto"
+    },
+    {
+      "canonical_key": "ETH",
+      "display_name": "Ethereum",
+      "aliases": ["ethereum", "ether", "eth"],
+      "sector": "crypto"
+    }
+  ],
+  "sectors": [
+    {"canonical_key": "banking", "display_name": "Banking", "aliases": ["bank", "banking", "lender", "lenders"]},
+    {"canonical_key": "it", "display_name": "IT", "aliases": ["it", "technology services", "software", "tech"]},
+    {"canonical_key": "auto", "display_name": "Auto", "aliases": ["auto", "automobile", "vehicle", "ev"]},
+    {"canonical_key": "pharma", "display_name": "Pharma", "aliases": ["pharma", "drugmaker", "healthcare", "biotech"]},
+    {"canonical_key": "energy", "display_name": "Energy", "aliases": ["oil", "gas", "energy", "refiner", "petchem"]},
+    {"canonical_key": "fmcg", "display_name": "FMCG", "aliases": ["fmcg", "consumer goods", "staples"]},
+    {"canonical_key": "capital-goods", "display_name": "Capital Goods", "aliases": ["capital goods", "industrial", "infrastructure", "engineering"]},
+    {"canonical_key": "telecom", "display_name": "Telecom", "aliases": ["telecom", "telecoms", "wireless", "5g"]},
+    {"canonical_key": "realty", "display_name": "Realty", "aliases": ["real estate", "realty", "property", "housing"]},
+    {"canonical_key": "metals", "display_name": "Metals", "aliases": ["steel", "metal", "aluminium", "copper"]},
+    {"canonical_key": "crypto", "display_name": "Crypto", "aliases": ["crypto", "blockchain", "token", "digital asset"]},
+    {"canonical_key": "indices", "display_name": "Indices", "aliases": ["index", "indices", "benchmark"]}
+  ],
+  "topics": [
+    {"canonical_key": "earnings", "display_name": "Earnings", "aliases": ["earnings", "earnings call", "quarterly", "q1", "q2", "q3", "q4", "results"]},
+    {"canonical_key": "ipo", "display_name": "IPO", "aliases": ["ipo", "initial public offering", "listing", "listed today"]},
+    {"canonical_key": "rbi", "display_name": "RBI", "aliases": ["rbi", "reserve bank of india", "mpc"]},
+    {"canonical_key": "fed", "display_name": "Fed", "aliases": ["federal reserve", "fed", "fomc"]},
+    {"canonical_key": "regulation", "display_name": "Regulation", "aliases": ["regulation", "regulatory", "sebi", "sec", "compliance", "rule"]},
+    {"canonical_key": "rates", "display_name": "Rates", "aliases": ["interest rates", "rate cut", "rate hike", "yield", "bond yields"]},
+    {"canonical_key": "macro", "display_name": "Macro", "aliases": ["inflation", "gdp", "economic growth", "macro", "recession", "fiscal"]},
+    {"canonical_key": "mna", "display_name": "M&A", "aliases": ["merger", "acquisition", "takeover", "buyout", "stake sale"]},
+    {"canonical_key": "fundraising", "display_name": "Fundraising", "aliases": ["fundraise", "fundraising", "capital raise", "qip", "placement"]},
+    {"canonical_key": "guidance", "display_name": "Guidance", "aliases": ["guidance", "outlook", "forecast", "projection"]},
+    {"canonical_key": "commodities", "display_name": "Commodities", "aliases": ["crude", "oil", "gold", "silver", "commodity", "gas"]},
+    {"canonical_key": "results", "display_name": "Results", "aliases": ["results", "profit", "net profit", "loss", "revenue"]},
+    {"canonical_key": "markets", "display_name": "Markets", "aliases": ["markets", "stocks", "shares", "equities", "benchmark"]},
+    {"canonical_key": "crypto", "display_name": "Crypto", "aliases": ["bitcoin", "crypto", "ethereum", "token", "web3"]}
+  ],
+  "macro_entities": [
+    {"canonical_key": "RBI", "display_name": "Reserve Bank of India", "aliases": ["reserve bank of india", "rbi", "mpc"]},
+    {"canonical_key": "SEBI", "display_name": "SEBI", "aliases": ["sebi", "securities and exchange board of india"]},
+    {"canonical_key": "FED", "display_name": "Federal Reserve", "aliases": ["federal reserve", "fed", "fomc"]},
+    {"canonical_key": "NSE", "display_name": "NSE", "aliases": ["nse", "national stock exchange"]},
+    {"canonical_key": "BSE", "display_name": "BSE", "aliases": ["bse", "bombay stock exchange"]}
+  ]
+}

@@ -17,7 +17,7 @@ services:
     buildCommand: pip install -r requirements.txt
     schedule: "*/5 * * * *"
     plan: starter
-    startCommand: curl -fsS -X POST "$BASE_URL/v1/ingest/run?trigger_type=scheduled"
+    startCommand: python -m app.trigger_ingest
     envVars:
       - key: BASE_URL
         sync: false

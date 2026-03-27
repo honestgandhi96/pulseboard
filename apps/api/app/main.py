@@ -15,6 +15,7 @@ app = FastAPI(title="Stock News Aggregator API", version="0.3.0")
 
 ROOT_DIR = Path(__file__).resolve().parents[3]
 WEB_DIR = ROOT_DIR / "apps" / "web"
+SOURCES_CONFIG_PATH = ROOT_DIR / "config" / "sources.json"
 app.mount("/assets", StaticFiles(directory=str(WEB_DIR), html=False), name="web-assets")
 
 
@@ -54,7 +55,7 @@ def normalize_search_query(query: str) -> str:
 
 
 @app.post("/v1/sources/seed")
-def seed_sources(config_path: str = "/Users/sugamgandhi/Desktop/stock_news/config/sources.json") -> Dict[str, Any]:
+def seed_sources(config_path: str = str(SOURCES_CONFIG_PATH)) -> Dict[str, Any]:
     path = Path(config_path)
     if not path.exists():
         raise HTTPException(status_code=404, detail=f"Config not found: {config_path}")

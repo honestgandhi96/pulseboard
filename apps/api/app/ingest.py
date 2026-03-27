@@ -51,6 +51,11 @@ def now_utc_db() -> str:
 def parse_db_datetime(value: Optional[str]) -> Optional[datetime]:
     if not value:
         return None
+    if isinstance(value, datetime):
+        dt = value
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return dt.astimezone(timezone.utc)
     for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%dT%H:%M:%S%z", "%Y-%m-%dT%H:%M:%S.%f%z"):
         try:
             dt = datetime.strptime(value, fmt)

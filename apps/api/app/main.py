@@ -8,7 +8,7 @@ from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from .db import get_conn, init_db
+from .db import execute, get_conn, init_db, is_postgres, query_all, query_one, sql_now
 from .ingest import ingest_all
 
 app = FastAPI(title="Stock News Aggregator API", version="0.3.0")
@@ -68,13 +68,15 @@ def seed_sources(config_path: str = "/Users/sugamgandhi/Desktop/stock_news/confi
     with get_conn() as conn:
         for source in sources:
             validate_source_payload(source)
-            exists_before = conn.execute(
+            exists_before = query_one(
+                conn,
                 "SELECT 1 FROM sources WHERE name = ?",
                 (source["name"],),
-            ).fetchone()
+            )
 
-            conn.execute(
-                """
+            execute(
+                conn,
+                f"""
                 INSERT INTO sources (
                     name,
                     feed_url,
@@ -83,13 +85,13 @@ def seed_sources(config_path: str = "/Users/sugamgandhi/Desktop/stock_news/confi
                     trust_score,
                     created_at,
                     updated_at
-                ) VALUES (?, ?, ?, ?, ?, datetime('now'), datetime('now'))
+                ) VALUES (?, ?, ?, ?, ?, {sql_now()}, {sql_now()})
                 ON CONFLICT(name) DO UPDATE SET
                     feed_url = excluded.feed_url,
                     polling_interval_minutes = excluded.polling_interval_minutes,
                     status = excluded.status,
                     trust_score = excluded.trust_score,
-                    updated_at = datetime('now')
+                    updated_at = {sql_now()}
                 """,
                 (
                     source["name"],
@@ -137,8 +139,7 @@ def list_sources(status: Optional[str] = None) -> List[Dict[str, Any]]:
     query += " ORDER BY trust_score DESC, id ASC"
 
     with get_conn() as conn:
-        rows = conn.execute(query, params).fetchall()
-    return [dict(r) for r in rows]
+        return query_all(conn, query, params)
 
 
 @app.post("/v1/ingest/run")
@@ -156,7 +157,8 @@ def run_ingestion(
 @app.get("/v1/ingest/runs")
 def list_ingestion_runs(limit: int = Query(default=20, ge=1, le=200)) -> List[Dict[str, Any]]:
     with get_conn() as conn:
-        rows = conn.execute(
+        return query_all(
+            conn,
             """
             SELECT
                 id,
@@ -175,18 +177,18 @@ def list_ingestion_runs(limit: int = Query(default=20, ge=1, le=200)) -> List[Di
             LIMIT ?
             """,
             (limit,),
-        ).fetchall()
-    return [dict(r) for r in rows]
+        )
 
 
 @app.get("/v1/ingest/runs/{run_id}/sources")
 def list_ingestion_run_sources(run_id: int) -> List[Dict[str, Any]]:
     with get_conn() as conn:
-        run = conn.execute("SELECT id FROM ingestion_runs WHERE id = ?", (run_id,)).fetchone()
+        run = query_one(conn, "SELECT id FROM ingestion_runs WHERE id = ?", (run_id,))
         if not run:
             raise HTTPException(status_code=404, detail=f"Run {run_id} not found")
 
-        rows = conn.execute(
+        return query_all(
+            conn,
             """
             SELECT
                 id,
@@ -207,8 +209,7 @@ def list_ingestion_run_sources(run_id: int) -> List[Dict[str, Any]]:
             ORDER BY id ASC
             """,
             (run_id,),
-        ).fetchall()
-    return [dict(r) for r in rows]
+        )
 
 
 @app.get("/v1/articles")
@@ -220,9 +221,7 @@ def list_articles(
 ) -> Dict[str, Any]:
     clauses: List[str] = []
     params: List[Any] = []
-    rank_select = ""
     order_by = "COALESCE(a.published_at, a.fetched_at) DESC"
-    joins = ""
 
     normalized_q = normalize_search_query(q) if q else ""
     if q and not normalized_q:
@@ -244,17 +243,29 @@ def list_articles(
         }
 
     if normalized_q:
-        joins += " JOIN articles_fts ON articles_fts.rowid = a.id"
-        clauses.append("articles_fts MATCH ?")
-        params.append(normalized_q)
-        rank_select = ", bm25(articles_fts, 1.4, 0.8) AS search_rank"
-        order_by = "search_rank ASC, COALESCE(a.published_at, a.fetched_at) DESC"
+        if is_postgres():
+            clauses.append(
+                "to_tsvector('simple', coalesce(a.title, '') || ' ' || coalesce(a.summary, '')) @@ "
+                "plainto_tsquery('simple', ?)"
+            )
+            params.append(q or "")
+            order_by = (
+                "ts_rank_cd(to_tsvector('simple', coalesce(a.title, '') || ' ' || coalesce(a.summary, '')), "
+                "plainto_tsquery('simple', ?)) DESC, COALESCE(a.published_at, a.fetched_at) DESC"
+            )
+        else:
+            clauses.append("articles_fts MATCH ?")
+            params.append(normalized_q)
+            order_by = "bm25(articles_fts, 1.4, 0.8) ASC, COALESCE(a.published_at, a.fetched_at) DESC"
 
     if source_id is not None:
         clauses.append("a.source_id = ?")
         params.append(source_id)
 
     where_sql = f"WHERE {' AND '.join(clauses)}" if clauses else ""
+    joins = ""
+    if normalized_q and not is_postgres():
+        joins = " JOIN articles_fts ON articles_fts.rowid = a.id"
 
     count_sql = f"""
         SELECT COUNT(1) AS total
@@ -300,6 +311,9 @@ def list_articles(
             LIMIT ? OFFSET ?
         """
     else:
+        data_params = list(params)
+        if normalized_q and is_postgres():
+            data_params = data_params + [q or ""]
         data_sql = f"""
             SELECT
                 a.id,
@@ -311,7 +325,6 @@ def list_articles(
                 a.published_at,
                 a.fetched_at,
                 a.language
-                {rank_select}
             FROM articles a
             JOIN sources s ON s.id = a.source_id
             {joins}
@@ -319,10 +332,13 @@ def list_articles(
             ORDER BY {order_by}
             LIMIT ? OFFSET ?
         """
+    if not (normalized_q or source_id is not None):
+        data_params = list(params)
 
     with get_conn() as conn:
-        total = int(conn.execute(count_sql, params).fetchone()["total"])
-        rows = conn.execute(data_sql, params + [limit, offset]).fetchall()
+        total_row = query_one(conn, count_sql, params)
+        total = int(total_row["total"]) if total_row else 0
+        rows = query_all(conn, data_sql, data_params + [limit, offset])
 
     total_pages = math.ceil(total / limit) if total > 0 else 0
     current_page = (offset // limit) + 1
@@ -330,7 +346,7 @@ def list_articles(
     prev_offset = max(0, offset - limit) if offset > 0 else None
 
     return {
-        "items": [dict(r) for r in rows],
+        "items": rows,
         "pagination": {
             "limit": limit,
             "offset": offset,

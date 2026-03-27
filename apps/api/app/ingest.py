@@ -13,7 +13,7 @@ from urllib.parse import parse_qsl, urlparse, urlunparse
 import feedparser
 import certifi
 
-from .db import get_conn
+from .db import execute, get_conn, query_all, query_one
 
 TRACKING_PARAMS = {
     "utm_source",
@@ -164,10 +164,10 @@ def fetch_eligible_sources(force_all: bool = False, source_id: Optional[int] = N
             params.append(source_id)
 
         query += " ORDER BY trust_score DESC, id ASC"
-        rows = conn.execute(query, params).fetchall()
+        rows = query_all(conn, query, params)
 
     if force_all:
-        return [dict(row) for row in rows]
+        return rows
 
     now = now_utc()
     eligible: List[Dict[str, Any]] = []
@@ -185,7 +185,8 @@ def fetch_eligible_sources(force_all: bool = False, source_id: Optional[int] = N
 
 def start_run(total_sources: int, trigger_type: str) -> int:
     with get_conn() as conn:
-        running = conn.execute(
+        running = query_one(
+            conn,
             """
             SELECT id, started_at
             FROM ingestion_runs
@@ -193,20 +194,25 @@ def start_run(total_sources: int, trigger_type: str) -> int:
             ORDER BY id DESC
             LIMIT 1
             """
-        ).fetchone()
+        )
         if running:
             started_at = parse_db_datetime(running["started_at"]) or now_utc()
             if now_utc() - started_at < timedelta(minutes=30):
                 raise RuntimeError(f"Ingestion run already active (run_id={running['id']})")
 
-        cur = conn.execute(
+        cur = execute(
+            conn,
             """
             INSERT INTO ingestion_runs (started_at, status, trigger_type, total_sources)
             VALUES (?, 'running', ?, ?)
+            RETURNING id
             """,
             (now_utc_db(), trigger_type, total_sources),
         )
-        return int(cur.lastrowid)
+        row = cur.fetchone()
+        if not row:
+            raise RuntimeError("failed to create ingestion run")
+        return int(row["id"])
 
 
 def finish_run(
@@ -226,7 +232,8 @@ def finish_run(
         status = "failed"
 
     with get_conn() as conn:
-        conn.execute(
+        execute(
+            conn,
             """
             UPDATE ingestion_runs
             SET completed_at = ?,
@@ -267,7 +274,8 @@ def record_source_run(
     error_message: Optional[str],
 ) -> None:
     with get_conn() as conn:
-        conn.execute(
+        execute(
+            conn,
             """
             INSERT INTO ingestion_source_runs (
                 run_id,
@@ -313,7 +321,8 @@ def update_source_health(
 ) -> None:
     with get_conn() as conn:
         if succeeded:
-            conn.execute(
+            execute(
+                conn,
                 """
                 UPDATE sources
                 SET last_polled_at = ?,
@@ -339,7 +348,8 @@ def update_source_health(
                 ),
             )
         else:
-            conn.execute(
+            execute(
+                conn,
                 """
                 UPDATE sources
                 SET last_polled_at = ?,
@@ -375,8 +385,16 @@ def fetch_feed(source: Dict[str, Any]) -> feedparser.FeedParserDict:
             req = urllib.request.Request(
                 source["feed_url"],
                 headers={
-                    "User-Agent": "stock-news-aggregator/0.1 (+rss-ingest)",
-                    "Accept": "application/rss+xml, application/atom+xml, application/xml;q=0.9, */*;q=0.8",
+                    "User-Agent": (
+                        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                        "AppleWebKit/537.36 (KHTML, like Gecko) "
+                        "Chrome/123.0.0.0 Safari/537.36"
+                    ),
+                    "Accept": "application/rss+xml, application/atom+xml, application/xml,text/xml;q=0.9,*/*;q=0.8",
+                    "Accept-Language": "en-US,en;q=0.9",
+                    "Cache-Control": "no-cache",
+                    "Pragma": "no-cache",
+                    "Referer": source["feed_url"],
                 },
             )
             with urllib.request.urlopen(req, timeout=FEED_TIMEOUT_SECONDS, context=ssl_context) as resp:
@@ -400,18 +418,20 @@ def upsert_article(
     language: str,
 ) -> Tuple[bool, int]:
     with get_conn() as conn:
-        existing = conn.execute(
+        existing = query_one(
+            conn,
             """
             SELECT id FROM articles
             WHERE normalized_url = ? OR title_hash = ?
             LIMIT 1
             """,
             (normalized, title_hash),
-        ).fetchone()
+        )
 
         if existing:
             article_id = int(existing["id"])
-            conn.execute(
+            execute(
+                conn,
                 """
                 UPDATE articles
                 SET summary = COALESCE(NULLIF(?, ''), summary),
@@ -423,7 +443,8 @@ def upsert_article(
             )
             return (False, article_id)
 
-        cur = conn.execute(
+        cur = execute(
+            conn,
             """
             INSERT INTO articles (
                 source_id,
@@ -436,6 +457,7 @@ def upsert_article(
                 fetched_at,
                 language
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            RETURNING id
             """,
             (
                 source_id,
@@ -449,7 +471,10 @@ def upsert_article(
                 language,
             ),
         )
-        return (True, int(cur.lastrowid))
+        row = cur.fetchone()
+        if not row:
+            raise RuntimeError("failed to insert article")
+        return (True, int(row["id"]))
 
 
 def ingest_source(source: Dict[str, Any], run_id: int) -> Dict[str, Any]:

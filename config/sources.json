@@ -4,7 +4,7 @@
       "name": "Reuters Business",
       "feed_url": "https://www.reutersagency.com/feed/?best-topics=business-finance&post_type=best",
       "polling_interval_minutes": 5,
-      "status": "active",
+      "status": "disabled",
       "trust_score": 95
     },
     {
@@ -53,13 +53,20 @@
       "name": "Business Standard Markets",
       "feed_url": "https://www.business-standard.com/rss/markets-106.rss",
       "polling_interval_minutes": 8,
-      "status": "active",
+      "status": "disabled",
       "trust_score": 82
     },
     {
       "name": "Moneycontrol Business",
       "feed_url": "https://www.moneycontrol.com/rss/business.xml",
       "polling_interval_minutes": 8,
+      "status": "disabled",
+      "trust_score": 79
+    },
+    {
+      "name": "Moneycontrol Top News",
+      "feed_url": "https://www.moneycontrol.com/rss/MCtopnews.xml",
+      "polling_interval_minutes": 10,
       "status": "active",
       "trust_score": 79
     },
@@ -104,6 +111,34 @@
       "polling_interval_minutes": 10,
       "status": "active",
       "trust_score": 72
+    },
+    {
+      "name": "NYT Business",
+      "feed_url": "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml",
+      "polling_interval_minutes": 10,
+      "status": "active",
+      "trust_score": 85
+    },
+    {
+      "name": "Indian Express Business",
+      "feed_url": "https://indianexpress.com/section/business/feed/",
+      "polling_interval_minutes": 10,
+      "status": "active",
+      "trust_score": 81
+    },
+    {
+      "name": "Hindu BusinessLine Markets",
+      "feed_url": "https://www.thehindubusinessline.com/markets/feeder/default.rss",
+      "polling_interval_minutes": 8,
+      "status": "active",
+      "trust_score": 83
+    },
+    {
+      "name": "NDTV Profit Latest",
+      "feed_url": "https://feeds.feedburner.com/ndtvprofit-latest",
+      "polling_interval_minutes": 10,
+      "status": "active",
+      "trust_score": 80
     }
   ]
 }

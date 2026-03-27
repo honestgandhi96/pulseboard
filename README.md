@@ -7,10 +7,11 @@ This repo bootstraps a finance news aggregation backend + frontend similar to Pu
 - Pagination metadata for feed UX
 - Source-diversified default ranking (reduces single-source domination)
 - Track ingestion runs and per-source health metrics
+- Supports local SQLite and cloud Postgres via `DATABASE_URL`
 
 ## Tech (MVP)
 - API: FastAPI
-- Storage: SQLite (upgrade to Postgres in next phase)
+- Storage: SQLite locally, Postgres/Supabase in cloud
 - Ingestion: RSS polling via `feedparser`
 - Frontend: static HTML/CSS/JS served by FastAPI
 
@@ -47,8 +48,9 @@ See `/Users/sugamgandhi/Desktop/stock_news/docs/SCHEDULING.md`.
 1. Push this repo to GitHub.
 2. In Render: **New +** -> **Blueprint** -> select repo.
 3. Render will use `/Users/sugamgandhi/Desktop/stock_news/render.yaml`.
-4. Set cron env var: `BASE_URL=https://<your-web-service>.onrender.com`.
-5. Seed + first ingest:
+4. Set web env var: `DATABASE_URL=postgresql://...` from Supabase.
+5. Set cron env var: `BASE_URL=https://<your-web-service>.onrender.com`.
+6. Seed + first ingest:
 ```bash
 curl -X POST "https://<your-web-service>.onrender.com/v1/sources/seed"
 curl -X POST "https://<your-web-service>.onrender.com/v1/ingest/run?force_all=true"
